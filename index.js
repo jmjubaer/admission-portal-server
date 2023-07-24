@@ -72,7 +72,7 @@ async function run() {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
     })
-    
+
     app.post('/reviews',async(req,res) => {
       const review = req.body;
       const result = await reviewsCollection.insertOne(review);
