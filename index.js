@@ -30,9 +30,6 @@ async function run() {
     const reviewsCollection = client.db('admission-portal').collection('reviews');
     const myCollageCollection = client.db('admission-portal').collection('mycollage');
 
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     // user API=================
     app.post('/user', async(req, res) =>{
@@ -115,6 +112,10 @@ async function run() {
       res.send(result);
   })
   
+      // Send a ping to confirm a successful connection
+      await client.db("admin").command({ ping: 1 });
+      console.log("Pinged your deployment. You successfully connected to MongoDB!");
+      
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
