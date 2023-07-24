@@ -26,6 +26,10 @@ async function run() {
     // await client.connect();
     const usersCollection = client.db('admission-portal').collection('users');
     const collageCollection = client.db('admission-portal').collection('collages');
+    const galleryCollection = client.db('admission-portal').collection('gallery');
+    const reviewsCollection = client.db('admission-portal').collection('reviews');
+    const myCollageCollection = client.db('admission-portal').collection('mycollage');
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -51,18 +55,63 @@ async function run() {
     })
     app.get('/collages/:id', async(req, res) => { 
       const id = req.params.id;
-      console.log(id);
       const query = {_id: new ObjectId(id)}
       const result = await collageCollection.findOne(query);
       res.send(result);
     })
+
+    // Gallery api
+
+    app.get('/gallery',async(req,res) => {
+      const result = await galleryCollection.find().toArray();
+      res.send(result);
+    })
+
+    // Review API
+    app.get('/reviews',async(req,res) => {
+      const result = await reviewsCollection.find().toArray();
+      res.send(result);
+    })
+    
+    app.post('/reviews',async(req,res) => {
+      const review = req.body;
+      const result = await reviewsCollection.insertOne(review);
+      res.send(result);
+    })
+
+    // MY collage API
+    app.get('/myCollage',async(req,res) => {
+      const email = req.query.email;
+      const query = {email: email}
+      const result = await myCollageCollection.findOne(query);
+      res.send(result);
+    })
+    app.post('/myCollage',async(req,res) => {
+      const collage = req.body;
+      const result = await myCollageCollection.insertOne(collage);
+      res.send(result);
+    })
+
+    app.put('/user/:email', async(req, res) =>{
+      const email = req.params.email;
+      const collage = req.body;
+      const query = {email: email};
+      const option = {upsert: true};
+      const updatedDoc = {
+        $set: {
+           ...collage
+        }
+      } 
+      const result = await usersCollection.updateOne(query,updatedDoc,option)
+      res.send(result);
+  })
+  
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
 run().catch(console.dir);
-
 
 
 app.get('/', (req,res) => {
