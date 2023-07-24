@@ -60,6 +60,15 @@ async function run() {
       res.send(result);
     })
 
+    //Search collage
+    app.get('/search',async(req,res) => {
+      const searchText = req.query.text;
+      const filter = {collegeName: {$regex: searchText,$options: "i"}}
+      const result = await collageCollection.find(filter).toArray();
+      res.send(result);
+    })
+
+    
     // Gallery api
 
     app.get('/gallery',async(req,res) => {
